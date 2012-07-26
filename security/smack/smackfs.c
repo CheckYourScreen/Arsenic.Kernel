@@ -266,17 +266,13 @@ static int smk_parse_rule(const char *data, struct smack_rule *rule, int import)
 		return -1;
 	}
 
-	switch (data[SMK_LABELLEN + SMK_LABELLEN + 4]) {
-	case '-':
-		break;
-	case 't':
-	case 'T':
-		rule->smk_access |= MAY_TRANSMUTE;
-		break;
-	default:
-		return -1;
-	}
+	/* This is inefficient */
+	datalen = strlen(data);
 
+	/* Our first element can be 64 + \0 with no spaces */
+	subject = kzalloc(datalen + 1, GFP_KERNEL);
+	if (subject == NULL)
+		return -1;
 	return 0;
 }
 
