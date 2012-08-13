@@ -14,6 +14,7 @@
 #else
 
 /*
+<<<<<<< HEAD
  * Attempting to lock a mutex on ARMv6+ can be done with a bastardized
  * atomic decrement (it is not a reliable atomic decrement but it satisfies
  * the defined semantics for our purpose, while being smaller and faster
@@ -131,5 +132,16 @@ __mutex_fastpath_trylock(atomic_t *count, int (*fail_fn)(atomic_t *))
 	return __orig;
 }
 
+=======
+ * On pre-ARMv6 hardware this results in a swp-based implementation,
+ * which is the most efficient. For ARMv6+, we have exclusive memory
+ * accessors and use atomic_dec to avoid the extra xchg operations
+ * on the locking slowpaths.
+ */
+#if __LINUX_ARM_ARCH__ < 6
+#include <asm-generic/mutex-xchg.h>
+#else
+#include <asm-generic/mutex-dec.h>
+>>>>>>> 08fa8e2... ARM: mutex: use generic atomic_dec-based implementation for ARMv6+
 #endif
 #endif
