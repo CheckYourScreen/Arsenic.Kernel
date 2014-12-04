@@ -1349,7 +1349,7 @@ static unsigned int __cpufreq_get(unsigned int cpu)
 
 	ret_freq = cpufreq_driver->get(cpu);
 
-	if(!policy)
+	if (!policy)
 		return ret_freq;
 
 	if (ret_freq && policy->cur &&
