@@ -370,6 +370,7 @@ UINT8 *FAT_getblk(struct super_block *sb, UINT32 sec)
 	bp->flag = 0;
 
 	FAT_cache_insert_hash(sb, bp);
+
 	if (sector_read(sb, sec, &(bp->buf_bh), 1) != FFS_SUCCESS) {
 		FAT_cache_remove_hash(bp);
 		bp->drv = -1;
@@ -526,7 +527,8 @@ static UINT8 *__buf_getblk(struct super_block *sb, UINT32 sec)
 	bp->sec = sec;
 	bp->flag = 0;
 
-	buf_cache_insert_hash(sb, bp);	
+	buf_cache_insert_hash(sb, bp);
+
 	if (sector_read(sb, sec, &(bp->buf_bh), 1) != FFS_SUCCESS) {
 		buf_cache_remove_hash(bp);
 		bp->drv = -1;
@@ -537,6 +539,7 @@ static UINT8 *__buf_getblk(struct super_block *sb, UINT32 sec)
 		move_to_lru(bp, &p_fs->buf_cache_lru_list);
 		return NULL;
 	}
+
 	return(bp->buf_bh->b_data);
 
 }
