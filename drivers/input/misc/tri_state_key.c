@@ -128,17 +128,17 @@ static void switch_dev_work(struct work_struct *work)
 		//pr_err("%s  gpio_22get_value(%d)=%d\n",__func__,switch_data->key3_gpio,gpio_get_value(switch_data->key3_gpio));
 		if (!gpio_get_value(switch_data->key2_gpio))
 		{
-			mode = MODE_NORMAL;
+			mode = 1;
 			keyCode = keyCode_slider_bottom;
 		}
 		else if (!gpio_get_value(switch_data->key3_gpio))
 		{
-			mode = MODE_DO_NOT_DISTURB;
+			mode = 2;
 			keyCode = keyCode_slider_middle;
 		}
 		else if (!gpio_get_value(switch_data->key1_gpio))
 		{
-			mode = MODE_MUTE;
+			mode = 3;
 			keyCode = keyCode_slider_top;
 		}
 	}
@@ -403,7 +403,7 @@ static ssize_t keyCode_middle_write(struct file *file, const char __user *page, 
 		return t;
 
 	keyCode_slider_middle = data;
-	if (current_mode == MODE_DO_NOT_DISTURB)
+	if (current_mode == 2)
 		send_input(keyCode_slider_middle);
 
 	return t;
