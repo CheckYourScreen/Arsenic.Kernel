@@ -50,6 +50,15 @@ struct ib_config {
 	uint32_t nr_cpus_to_boost;
 };
 
+#ifdef VENDOR_EDIT
+//add by huruihuan for tradeoff performence and power
+unsigned int boost_game_only;
+module_param(boost_game_only, uint, 0644);
+
+unsigned int governor_dynamic;
+module_param(governor_dynamic, uint, 0644);
+#endif
+
 struct boost_policy {
 	spinlock_t lock;
 	struct fb_policy fb;
