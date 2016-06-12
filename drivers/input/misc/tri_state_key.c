@@ -98,8 +98,8 @@ static void send_input(int keyCode)
 static int hw_version;
 static void switch_dev_work(struct work_struct *work)
 {
-	int keyCode;
-	int mode;
+	int keyCode = 0;
+	int mode = 0;
 	//pr_err("%s  gpio_get_value(%d)=%d\n",__func__,switch_data->key1_gpio,gpio_get_value(switch_data->key1_gpio));
 	//pr_err("%s  gpio_get_value(%d)=%d\n",__func__,switch_data->key2_gpio,gpio_get_value(switch_data->key2_gpio));
 	//pr_err("%s  gpio_get_value(%d)=%d\n",__func__,switch_data->key3_gpio,gpio_get_value(switch_data->key3_gpio));
