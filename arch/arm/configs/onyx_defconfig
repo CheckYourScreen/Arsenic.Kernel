@@ -1,4 +1,4 @@
-CONFIG_LOCALVERSION="-Arsenic.Kernel"
+CONFIG_LOCALVERSION="-Arsenic.Kernel-onyx.R1"
 # CONFIG_ARM_PATCH_PHYS_VIRT is not set
 
 # Arsenic stuff
