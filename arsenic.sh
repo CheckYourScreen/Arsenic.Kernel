@@ -1,3 +1,7 @@
+
+# Build script for Arsenic Kernel
+# By- Nimit Mehta (CheckYourScreen)
+
 #For Time Calculation
 BUILD_START=$(date +"%s")
 echo "enter version name for zip name (only number) :" 
@@ -49,7 +53,16 @@ rm -rf $OUT_DIR/dtb
 cp $KERN_IMG $OUT_DIR/zImage
 cp $KERN_DTB $OUT_DIR/dtb
 cd $OUT_DIR
+echo "is it a test build ..? (y/n) :"
+read buildtype
+if [ $buildtype == 'y' ]
+then
+echo "test build number?:"
+read BN
+zip -r arsenic.kernel-onyx.R$VER-test-$BN-$(date +"%Y%m%d").zip *
+else
 zip -r arsenic.kernel-onyx.R$VER-$(date +"%Y%m%d").zip *
+fi
 }
 
 compile_kernel
