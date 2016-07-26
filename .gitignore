@@ -30,6 +30,7 @@ modules.builtin
 *.lzma
 *.xz
 *.lzo
+*.img
 *.patch
 *.gcno
 *.lz4
@@ -99,3 +100,7 @@ x509.genkey
 
 # Kconfig presets
 all.config
+*.zip
+/anykernel/zImage
+/anykernel/dtb
+/anykernel/arsenic*
