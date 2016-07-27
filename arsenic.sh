@@ -26,11 +26,11 @@ compile_kernel ()
 {
 echo -e "**********************************************************************************************"
 echo "                    "
-echo "                                    Compiling Arsenic-Kernel                    "
+echo "                                    Compiling Arsenic-Kernel with GCC 4.9                  "
 echo "                    "
 echo -e "**********************************************************************************************"
 make onyx_defconfig
-make -j16
+make -j8
 if ! [ -a $KERN_IMG ];
 then
 echo -e "$red Kernel Compilation failed! Fix the errors! $nocol"
@@ -59,9 +59,9 @@ if [ $buildtype == 'y' ]
 then
 echo "test build number?:"
 read BN
-zip -r arsenic.kernel-onyx.R$VER-test-$BN-$(date +"%Y%m%d").zip *
+zip -r arsenic.kernel-onyx.R$VER-test-$BN-gcc.zip *
 else
-zip -r arsenic.kernel-onyx.R$VER-$(date +"%Y%m%d").zip *
+zip -r arsenic.kernel-onyx.R$VER-gcc-$(date +"%Y%m%d").zip *
 fi
 }
 
