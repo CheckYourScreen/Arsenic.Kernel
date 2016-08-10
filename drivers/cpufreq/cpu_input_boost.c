@@ -53,10 +53,10 @@ struct ib_config {
 #ifdef VENDOR_EDIT
 //add by huruihuan for tradeoff performence and power
 unsigned int boost_game_only;
-module_param(boost_game_only, uint, 0644);
+module_param(boost_game_only);
 
 unsigned int governor_dynamic;
-module_param(governor_dynamic, uint, 0644);
+module_param(governor_dynamic);
 #endif
 
 struct boost_policy {
