@@ -362,66 +362,6 @@ static int synapitcs_ts_update(struct i2c_client *client, const uint8_t *data, u
 
 
 /*-------------------------------Using Struct----------------------------------*/
-
-struct synaptics_ts_data {
-	int irq;
-	int irq_gpio;
-	int id1_gpio;
-	int id2_gpio;
-	int id3_gpio;
-	int reset_gpio;
-	int enable2v8_gpio;
-	int max_num;
-	int enable_remote;
-	uint32_t irq_flags;
-	uint32_t max_x;
-    uint32_t max_y;
-	uint32_t max_y_real;
-	uint32_t btn_state;
-    uint32_t pre_finger_state;
-	uint32_t pre_btn_state;
-	struct input_dev *kpd;
-	struct work_struct  work;
-	struct work_struct speed_up_work;
-	struct i2c_client *client;
-	struct input_dev *input_dev;
-	struct hrtimer timer;
-#if defined(CONFIG_FB)
-	struct notifier_block fb_notif;
-#endif
-	/******power*******/
-	struct regulator *vdd_2v8;
-	struct regulator *vdd_3v0;
-	struct regulator *vcc_i2c_1v8;
-
-	/*pinctrl******/
-	struct device						*dev;
-	struct pinctrl 						*pinctrl;
-	struct pinctrl_state 				*id_pullup;
-	struct pinctrl_state 				*id_pulldown;
-
-	/*******for FW update*******/
-	bool suspended;
-	bool loading_fw;
-	char fw_name[TP_FW_NAME_MAX_LEN];
-	char test_limit_name[TP_FW_NAME_MAX_LEN];
-	char fw_id[12];
-	struct mutex mutex;
-
-	/******gesture*******/
-	int double_enable;
-	int gesture_enable;
-	int is_suspended;
-    atomic_t is_stop;
-    spinlock_t lock;
-	struct wakeup_source syna_isr_ws;
-	spinlock_t isr_lock;
-	bool i2c_awake;
-	struct completion i2c_resume;
-
-	ktime_t timestamp;
-};
-
 struct point_info {
     int x;
     int raw_x;
@@ -1738,12 +1678,6 @@ static void int_touch_s3508(struct synaptics_ts_data *ts,bool insert_flag)
 			TPD_ERR("synaptics_int_touch: i2c_transfer failed\n");
 			return;
 		}
-
-		input_event(ts->input_dev, EV_SYN, SYN_TIME_SEC,
-				ktime_to_timespec(ts->timestamp).tv_sec);
-		input_event(ts->input_dev, EV_SYN, SYN_TIME_NSEC,
-				ktime_to_timespec(ts->timestamp).tv_nsec);
-
 		for( i = 0; i < ts->max_num; i++ ){
 				points.x = ((buf[i*8+2]&0x0f)<<8) | (buf[i*8+1] & 0xff);
 				points.y = ((buf[i*8+4]&0x0f)<<8) | (buf[i*8+3] & 0xff);
@@ -2066,107 +2000,6 @@ static irqreturn_t synaptics_ts_irq_handler(int irq, void *dev_id)
 {
 	disable_irq_nosync(ts_g->client->irq);
 	queue_work(synaptics_wq, &ts_g->work);
-	int ret;
-	uint8_t buf[5];
-	uint8_t status = 0;
-	uint8_t inte = 0;
-	uint8_t i2c_err_count = 0;
-	struct synaptics_ts_data *ts = data;
-	unsigned long flags;
-	bool i2c_active;
-
-	if (ts->loading_fw  || ts->enable_remote)
-		return IRQ_HANDLED;
-
-	memset(buf, 0, sizeof(buf));
-	down(&work_sem);
-
-	if (is_suspend) {
-		spin_lock_irqsave(&ts->isr_lock, flags);
-		i2c_active = ts->i2c_awake;
-		spin_unlock_irqrestore(&ts->isr_lock, flags);
-
-		/* I2C bus must be active */
-		if (!i2c_active) {
-			__pm_stay_awake(&ts->syna_isr_ws);
-			/* Wait for I2C to resume before proceeding */
-			INIT_COMPLETION(ts->i2c_resume);
-			wait_for_completion_timeout(&ts->i2c_resume,
-							msecs_to_jiffies(30));
-		}
-	}
-
-	ts->timestamp = ktime_get();
-
-	i2c_smbus_write_byte_data(ts->client, 0xff, 0x00 );
-
-	ret = i2c_smbus_read_word_data(ts->client, F01_RMI_DATA_BASE);
-	if( ret < 0 ){
-		if( ret != -5 ){
-			TPDTM_DMESG("synaptics_ts_work_func: i2c_transfer failed\n");
-			goto up_semaphore;
-		}
-	/*for bug :i2c error when wake up system through gesture*/
-		while( (ret == -5 ) && ( i2c_err_count < 10) ){
-			msleep(5);
-			ret = i2c_smbus_read_word_data(ts->client, F01_RMI_DATA_BASE);
-			i2c_err_count++;
-		}
-		TPDTM_DMESG("Synaptic:ret == %d and try %d times\n", ret, i2c_err_count);
-	}
-	status = ret & 0xff;
-	inte = (ret & 0x7f00)>>8;
-	/*
-	//when the flinger flip from key to display erea , ret value is 0x1400,need
-	// make sure ,at this time the value of is_key_touch is 1 , need to set 0
-	// ,so that can call int_touch_s3508() function . shankai@bsp , 2015-9-14
-	*/
-	if(ret == 0x1400)
-	{
-		 atomic_set(&is_key_touch,0);
-		 TPD_DEBUG("shankai555@bsp:%s:%d:insert_flag\n",__func__,__LINE__);
-		insert_point = 1;
-	}
-
-	if (status)
-		int_state(ts);
-
-	if (inte & 0x04) {
-		//mingqiang.guo 2015/4/27 add for key press all the time
-		if (atomic_read(&is_key_touch)) {
-			key_press_all_the_time++;
-			if (key_press_all_the_time == 10) {
-				TPD_ERR("key press all the time %d ,force Cal tp\n",key_press_all_the_time);
-				i2c_smbus_write_byte_data(ts->client, 0xff, 0x01);
-				i2c_smbus_write_word_data(ts_g->client, F54_ANALOG_COMMAND_BASE, 0x04); // force update
-				i2c_smbus_write_byte_data(ts_g->client, F54_ANALOG_COMMAND_BASE, 0X02);//force Cal
-				i2c_smbus_write_byte_data(ts->client, 0xff, 0x00);
-				delay_qt_ms(60);
-				if(ts->pre_btn_state & 0x01)//menu
-					input_report_key(ts->input_dev, KEY_MENU, 0);
-				if(ts->pre_btn_state & 0x02)//home
-					input_report_key(ts->input_dev, KEY_HOMEPAGE, 0);
-				if(ts->pre_btn_state & 0x04)//reback
-					input_report_key(ts->input_dev, KEY_BACK, 0);
-				input_sync(ts->input_dev);
-				atomic_set(&is_key_touch, 0);
-				key_press_all_the_time = 0;
-				goto up_semaphore;
-			}
-		} else {
-			key_press_all_the_time = 0;
-			int_touch_s3508(ts,insert_point);
-		}
-	} else if (inte & 0x10) {
-		int_key_report_s3508(ts);
-	}
-
-up_semaphore:
-	up(&work_sem);
-
-	if (ts->syna_isr_ws.active)
-		__pm_relax(&ts->syna_isr_ws);
-
 	return IRQ_HANDLED;
 }
 #endif
