@@ -20,7 +20,7 @@ nocol='\033[0m'
 
 make clean && make mrproper
 export ARCH=arm
-export CROSS_COMPILE="/home/nimit/cmgcc4.9/bin/arm-linux-androideabi-"
+export CROSS_COMPILE="/home/nimit/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-"
 
 compile_kernel ()
 {
