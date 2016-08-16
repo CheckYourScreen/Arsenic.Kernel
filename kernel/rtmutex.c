@@ -569,13 +569,14 @@ static int task_blocks_on_rt_mutex(struct rt_mutex *lock,
 }
 
 /*
+ * Wake up the next waiter on the lock.
+ *
  * Remove the top waiter from the current tasks pi waiter list and
- * queue it up.
+ * wake it up.
  *
  * Called with lock->wait_lock held.
  */
-static void mark_wakeup_next_waiter(struct wake_q_head *wake_q,
-				    struct rt_mutex *lock)
+static void wakeup_next_waiter(struct rt_mutex *lock)
 {
 	struct rt_mutex_waiter *waiter;
 	unsigned long flags;
@@ -604,7 +605,12 @@ static void mark_wakeup_next_waiter(struct wake_q_head *wake_q,
 
 	raw_spin_unlock_irqrestore(&current->pi_lock, flags);
 
-	wake_q_add(wake_q, waiter->task);
+	/*
+	 * It's safe to dereference waiter as it cannot go away as
+	 * long as we hold lock->wait_lock. The waiter task needs to
+	 * acquire it in order to dequeue the waiter.
+	 */
+	wake_up_process(waiter->task);
 }
 
 /*
@@ -859,8 +865,6 @@ static inline int rt_mutex_slowtrylock(struct rt_mutex *lock)
 static void __sched
 rt_mutex_slowunlock(struct rt_mutex *lock)
 {
-	WAKE_Q(wake_q);
-
 	raw_spin_lock(&lock->wait_lock);
 
 	debug_rt_mutex_unlock(lock);
@@ -909,13 +913,10 @@ rt_mutex_slowunlock(struct rt_mutex *lock)
 	/*
 	 * The wakeup next waiter path does not suffer from the above
 	 * race. See the comments there.
-	 *
-	 * Queue the next waiter for wakeup once we release the wait_lock.
 	 */
-	mark_wakeup_next_waiter(&wake_q, lock);
+	wakeup_next_waiter(lock);
 
 	raw_spin_unlock(&lock->wait_lock);
-	wake_up_q(&wake_q);
 
 	/* Undo pi boosting if necessary: */
 	rt_mutex_adjust_prio(current);
