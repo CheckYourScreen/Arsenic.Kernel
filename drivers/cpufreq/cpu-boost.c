@@ -254,16 +254,17 @@ static void do_input_boost(struct work_struct *work)
 
 		i_sync_info = &per_cpu(sync_info, i);
 		ret = cpufreq_get_policy(&policy, i);
-		if (ret)
+		
+		if (ret) {
 			continue;
-		// ensure, touch boost freq does never exceed max scaling freq
-		if (input_boost_freq > policy.max)
-			freq = policy.max;
-		else
-			freq = input_boost_freq;
-
-		//if (policy.cur >= freq)
-		//	continue;
+		}
+		else {
+			pr_debug("Cannot get CPU info\n");
+			break;
+		}
+		// ensure, boost freq does never exceed max scaling freq
+			freq = max(input_boost_freq,policy.max);
+			policy.cur=max(policy.cur,freq);
 
 		cancel_delayed_work_sync(&i_sync_info->input_boost_rem);
 		i_sync_info->input_boost_min = freq;
