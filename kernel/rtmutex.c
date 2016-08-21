@@ -828,31 +828,22 @@ rt_mutex_slowlock(struct rt_mutex *lock, int state,
 /*
  * Slow path try-lock function:
  */
-static inline int rt_mutex_slowtrylock(struct rt_mutex *lock)
+static inline int
+rt_mutex_slowtrylock(struct rt_mutex *lock)
 {
-	int ret;
+	int ret = 0;
 
-	/*
-	 * If the lock already has an owner we fail to get the lock.
-	 * This can be done without taking the @lock->wait_lock as
-	 * it is only being read, and this is a trylock anyway.
-	 */
-	if (rt_mutex_owner(lock))
-		return 0;
-
-	/*
-	 * The mutex has currently no owner. Lock the wait lock and
-	 * try to acquire the lock.
-	 */
 	raw_spin_lock(&lock->wait_lock);
 
-	ret = try_to_take_rt_mutex(lock, current, NULL);
+	if (likely(rt_mutex_owner(lock) != current)) {
 
-	/*
-	 * try_to_take_rt_mutex() sets the lock waiters bit
-	 * unconditionally. Clean this up.
-	 */
-	fixup_rt_mutex_waiters(lock);
+		ret = try_to_take_rt_mutex(lock, current, NULL);
+		/*
+		 * try_to_take_rt_mutex() sets the lock waiters
+		 * bit unconditionally. Clean this up.
+		 */
+		fixup_rt_mutex_waiters(lock);
+	}
 
 	raw_spin_unlock(&lock->wait_lock);
 
