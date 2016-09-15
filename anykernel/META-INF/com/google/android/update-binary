@@ -129,16 +129,35 @@ if [ $? != "0" ]; then
 	abort;
 fi;
 
-# if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.modules)" == 1 ]; then
-#	ui_print "* Copying modules...";
-#	ui_print " ";
-#
-#	mount -o remount,rw /system;
-#	mkdir -p /system/lib/modules;
-#	cp -rf /tmp/anykernel/modules/* /system/lib/modules/;
-#	set_perm_recursive 0 0 0755 0644 /system/lib/modules;
-#	mount -o remount,ro /system;
-# fi;
+ui_print "* Checking for ROM Compatibility...";
+ui_print " ";
+ENGINE="/system/bin/thermal-engine";
+if [ -e "ENGINE" ]; then
+	ui_print "ROM is Compatible..!";
+else
+	ui_print "Sultanized ROM Detected..!";
+	ui_print "Adding Proper Support..";
+	mount -o remount,rw /system;
+	cp -f /tmp/anykernel/modules/bin/thermal-engine /system/bin/;
+	cp -f /tmp/anykernel/modules/vendor/lib/libthermalclient.so /system/vendor/lib/;
+	cp -f /tmp/anykernel/modules/vendor/lib/libthermalioctl.so /system/vendor/lib/;
+	set_perm 0 2000 0755 /system/bin/thermal-engine;
+	set_perm 0 0 0644 /system/vendor/lib/libthermalclient.so;
+	set_perm 0 0 0644 /system/vendor/lib/libthermalioctl.so;
+	mount -o remount,ro /system;
+fi;
+
+## remove deprecated blobs from rom
+
+MMPP="/system/bin/mm-pp-daemon";
+if [ -e "MMPP" ]; then
+	ui_print "Removing Deprecated Blobs from your ROM..";
+	mount -o remount,rw /system;
+	rm /system/bin/mm-pp-daemon;
+	rm /system/vendor/lib/libdisp-aba.so;
+	rm /system/vendor/lib/libmm-abl-oem.so;
+	mount -o remount,ro /system;
+fi;
 
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.cleanup)" == 1 ]; then
 	rm -rf /tmp/anykernel;

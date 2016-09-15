@@ -61,6 +61,8 @@ Module.symvers
 #
 !.gitignore
 !.mailmap
+!anykernel/modules/vendor/lib/libthermalioctl.so
+!anykernel/modules/vendor/lib/libthermalclient.so
 
 #
 # Generated include files
