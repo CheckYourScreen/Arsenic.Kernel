@@ -142,10 +142,14 @@ else
 	cp -f /tmp/anykernel/modules/bin/mpdecision /system/bin/;
 	cp -f /tmp/anykernel/modules/vendor/lib/libthermalclient.so /system/vendor/lib/;
 	cp -f /tmp/anykernel/modules/vendor/lib/libthermalioctl.so /system/vendor/lib/;
-	set_perm 0 2000 0755 /system/bin/thermal-engine;
-	set_perm 0 2000 0755 /system/bin/mpdecision;
-	set_perm 0 0 0644 /system/vendor/lib/libthermalclient.so;
-	set_perm 0 0 0644 /system/vendor/lib/libthermalioctl.so;
+	chown root:shell /system/bin/thermal-engine;
+	chmod 755 /system/bin/thermal-engine;
+	chown root:shell /system/bin/mpdecision;
+	chmod 755 /system/bin/mpdecision;
+	chown root:root /system/vendor/lib/libthermalclient.so;
+	chmod 644 /system/vendor/lib/libthermalclient.so;
+	chown root:root /system/vendor/lib/libthermalioctl.so;
+	chmod 644 /system/vendor/lib/libthermalioctl.so;
 	mount -o remount,ro /system;
 fi;
 
