@@ -59,9 +59,9 @@ if [ $buildtype == 'y' ]
 then
 echo "test build number?:"
 read BN
-zip -r arsenic.kernel-onyx.R$VER-test-$BN-gcc.zip *
+zip -r arsenic.kernel-onyx.R$VER-test-$BN.zip *
 else
-zip -r arsenic.kernel-onyx.R$VER-gcc-$(date +"%Y%m%d").zip *
+zip -r arsenic.kernel-onyx.R$VER-$(date +"%Y%m%d").zip *
 fi
 }
 
