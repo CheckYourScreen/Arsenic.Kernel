@@ -75,7 +75,7 @@ bb=/tmp/anykernel/tools/busybox;
 
 ui_print "### Arsenic Kernel ###";
 ui_print " ";
-ui_print "### By- Nimit Mehta###";
+ui_print "### By-Nimit Mehta ###";
 ui_print " ";
 
 mount -o ro /system;
@@ -135,7 +135,7 @@ ENGINE="/system/bin/thermal-engine";
 if [ -e "ENGINE" ]; then
 	ui_print "ROM is Compatible..!";
 else
-	ui_print "Sultanized ROM Detected..!";
+	ui_print "Sultanized ROM or Nougat ROM Detected..!";
 	ui_print "Adding Proper Support..";
 	mount -o remount,rw /system;
 	cp -f /tmp/anykernel/modules/bin/thermal-engine /system/bin/;
