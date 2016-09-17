@@ -135,7 +135,6 @@ ENGINE="/system/bin/thermal-engine";
 if [ -e "ENGINE" ]; then
 	ui_print "ROM is Compatible..!";
 else
-	ui_print "Sultanized ROM or Nougat ROM Detected..!";
 	ui_print "Adding Proper Support..";
 	mount -o remount,rw /system;
 	cp -f /tmp/anykernel/modules/bin/thermal-engine /system/bin/;
