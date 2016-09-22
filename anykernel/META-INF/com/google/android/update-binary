@@ -133,7 +133,7 @@ ui_print "* Checking for ROM Compatibility...";
 ui_print " ";
 ENGINE="/system/bin/thermal-engine";
 if [ ! -e "$ENGINE" ]; then
-	ui_print "Adding Proper Support to your ROM..";
+	ui_print "     Adding Proper Support to your ROM..";
 	mount -o remount,rw /system;
 	cp -f /tmp/anykernel/modules/bin/thermal-engine /system/bin/;
 	cp -f /tmp/anykernel/modules/bin/mpdecision /system/bin/;
@@ -149,21 +149,8 @@ if [ ! -e "$ENGINE" ]; then
 	chmod 644 /system/vendor/lib/libthermalioctl.so;
 	mount -o remount,ro /system;
 fi;
-
-ui_print "DONE..!";
-
-## remove deprecated blobs from rom
-ui_print "Scaning for deprecated stuff (if any)..";
-
-MMPP="/system/bin/mm-pp-daemon";
-if [ -e "$MMPP" ]; then
-	ui_print "Removing Deprecated Blobs from your ROM..";
-	mount -o remount,rw /system;
-	rm /system/bin/mm-pp-daemon;
-	rm /system/vendor/lib/libdisp-aba.so;
-	rm /system/vendor/lib/libmm-abl-oem.so;
-	mount -o remount,ro /system;
-fi;
+ui_print "  ";
+ui_print "   DONE..!";
 
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.cleanup)" == 1 ]; then
 	rm -rf /tmp/anykernel;
