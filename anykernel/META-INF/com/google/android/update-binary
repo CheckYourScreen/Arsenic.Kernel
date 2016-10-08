@@ -132,22 +132,32 @@ fi;
 ui_print "* Checking for ROM Compatibility...";
 ui_print " ";
 ENGINE="/system/bin/thermal-engine";
+ENGINEVENDOR="/system/vendor/bin/thermal-engine";
 if [ ! -e "$ENGINE" ]; then
-	ui_print "     Adding Proper Support to your ROM..";
-	mount -o remount,rw /system;
-	cp -f /tmp/anykernel/modules/bin/thermal-engine /system/bin/;
-	cp -f /tmp/anykernel/modules/bin/mpdecision /system/bin/;
-	cp -f /tmp/anykernel/modules/vendor/lib/libthermalclient.so /system/vendor/lib/;
-	cp -f /tmp/anykernel/modules/vendor/lib/libthermalioctl.so /system/vendor/lib/;
-	chown root:shell /system/bin/thermal-engine;
-	chmod 755 /system/bin/thermal-engine;
-	chown root:shell /system/bin/mpdecision;
-	chmod 755 /system/bin/mpdecision;
-	chown root:root /system/vendor/lib/libthermalclient.so;
-	chmod 644 /system/vendor/lib/libthermalclient.so;
-	chown root:root /system/vendor/lib/libthermalioctl.so;
-	chmod 644 /system/vendor/lib/libthermalioctl.so;
-	mount -o remount,ro /system;
+	if [ ! -e "$ENGINEVENDOR" ]; then
+		ui_print "    Sultanized ROM detected! Adding proper support...";
+		mount -o remount,rw /system;
+		cp -f /tmp/anykernel/modules/bin/thermal-engine /system/bin/;
+		cp -f /tmp/anykernel/modules/bin/mpdecision /system/bin/;
+		cp -f /tmp/anykernel/modules/vendor/lib/libthermalclient.so /system/vendor/lib/;
+		cp -f /tmp/anykernel/modules/vendor/lib/libthermalioctl.so /system/vendor/lib/;
+		cp -f /tmp/anykernel/modules/etc/thermal-engine-8974.conf /system/etc/;
+		chown root:shell /system/bin/thermal-engine;
+		chmod 755 /system/bin/thermal-engine;
+		chown root:shell /system/bin/mpdecision;
+		chmod 755 /system/bin/mpdecision;
+		chown root:root /system/vendor/lib/libthermalclient.so;
+		chmod 644 /system/vendor/lib/libthermalclient.so;
+		chown root:root /system/vendor/lib/libthermalioctl.so;
+		chmod 644 /system/vendor/lib/libthermalioctl.so;
+		chown root:root /system/etc/thermal-engine-8974.conf
+		chmod 644 /system/etc/thermal-engine-8974.conf
+		mount -o remount,ro /system;
+	else
+		ui_print "Running  CM14..? Its supported already..! ";
+	fi;
+else
+	ui_print " ROM is supported by default..! ";
 fi;
 ui_print "  ";
 ui_print "   DONE..!";

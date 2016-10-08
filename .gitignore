@@ -63,7 +63,7 @@ Module.symvers
 !.mailmap
 !anykernel/modules/vendor/lib/libthermalioctl.so
 !anykernel/modules/vendor/lib/libthermalclient.so
-
+!anykernel/modules/etc/thermal-engine-8974.conf
 #
 # Generated include files
 #
