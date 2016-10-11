@@ -8,7 +8,7 @@ echo "enter version name for zip name (only number) :"
 read VER
 # Housekeeping
 KERNEL_DIR=$PWD
-KERN_IMG=$KERNEL_DIR/arch/arm/boot/zImage
+KERN_IMG=$KERNEL_DIR/arch/arm/boot/zImage-dtb
 KERN_DTB=$KERNEL_DIR/arch/arm/boot/dt.img
 OUT_DIR=$KERNEL_DIR/anykernel/
 
@@ -36,7 +36,7 @@ then
 echo -e "$red Kernel Compilation failed! Fix the errors! $nocol"
 exit 1
 fi
-dtb
+# dtb
 zipping
 }
 
@@ -51,7 +51,7 @@ rm -rf $OUT_DIR/arsenic*.zip
 rm -rf $OUT_DIR/zImage
 rm -rf $OUT_DIR/dtb
 cp $KERN_IMG $OUT_DIR/zImage
-cp $KERN_DTB $OUT_DIR/dtb
+# cp $KERN_DTB $OUT_DIR/dtb
 cd $OUT_DIR
 echo "is it a test build ..? (y/n) :"
 read buildtype
