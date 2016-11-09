@@ -72,7 +72,6 @@ module_param(workload_boost, uint, 0644);
 #endif
 
 static u64 last_input_time;
-#define MIN_INPUT_INTERVAL (150 * USEC_PER_MSEC)
 
 /*
  * The CPUFREQ_ADJUST notifier is used to override the current policy min to
@@ -287,7 +286,7 @@ static void cpuboost_input_event(struct input_handle *handle,
 		return;
 
 	now = ktime_to_us(ktime_get());
-	if (now - last_input_time < MIN_INPUT_INTERVAL)
+	if ((now - last_input_time) < (input_boost_ms * USEC_PER_MSEC))
 		return;
 
 	if (work_pending(&input_boost_work))
