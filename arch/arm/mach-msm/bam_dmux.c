@@ -231,7 +231,7 @@ static struct srcu_struct bam_dmux_srcu;
 #define UL_FAST_TIMEOUT_DELAY 100 /* in ms */
 #define ENABLE_DISCONNECT_ACK	0x1
 #define SHUTDOWN_TIMEOUT_MS	500
-#define UL_WAKEUP_TIMEOUT_MS	2000
+#define UL_WAKEUP_TIMEOUT_MS	5000
 static uint32_t ul_timeout_delay = UL_TIMEOUT_DELAY;
 static void toggle_apps_ack(void);
 static void reconnect_to_bam(void);
