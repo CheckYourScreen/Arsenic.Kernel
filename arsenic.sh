@@ -8,6 +8,10 @@ echo "enter version name for zip name (only number) :"
 read VER
 # Housekeeping
 KERNEL_DIR=$PWD
+cd ..
+ROOT_PATH=$PWD
+ROOT_DIR_NAME=`basename "$PWD"`
+cd $KERNEL_DIR
 KERN_IMG=$KERNEL_DIR/arch/arm/boot/zImage-dtb
 KERN_DTB=$KERNEL_DIR/arch/arm/boot/dt.img
 OUT_DIR=$KERNEL_DIR/anykernel/
@@ -20,7 +24,7 @@ nocol='\033[0m'
 
 make clean && make mrproper
 export ARCH=arm
-export CROSS_COMPILE="/home/nimit/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-"
+export CROSS_COMPILE="$ROOT_PATH/arm-linux-androideabi-4.9/bin/arm-linux-androideabi-"
 
 compile_kernel ()
 {
