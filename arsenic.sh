@@ -58,14 +58,18 @@ cp $KERN_IMG $OUT_DIR/zImage
 cd $OUT_DIR
 echo "is it a test build ..? (y/n) :"
 read buildtype
-if [ $buildtype == 'y' ]
-then
-echo "test build number?:"
-read BN
-zip -r arsenic.kernel-onyx.R$VER-test-$BN.zip *
-else
-zip -r arsenic.kernel-onyx.R$VER-$(date +"%Y%m%d").zip *
-fi
+case "$buildtype" in
+	y | Y)
+		echo "test build number?:"
+		read BN
+		zip -r arsenic.kernel-onyx.R$VER-test-$BN.zip *
+		echo "Test Build no. $BN of R$VER Ready..!"
+		;;
+	*)
+		zip -r arsenic.kernel-onyx.R$VER-$(date +"%Y%m%d").zip *
+		echo "Release Build R$VER Ready..!!"
+		;;
+esac
 }
 
 compile_kernel
