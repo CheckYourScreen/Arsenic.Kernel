@@ -34,7 +34,7 @@ echo "                                    Compiling Arsenic-Kernel with GCC 4.9 
 echo "                    "
 echo -e "**********************************************************************************************"
 make onyx_defconfig
-make -j8
+make -j16
 if [ ! -e $KERN_IMG ];then
 echo -e "$red Kernel Compilation failed! Fix the errors! $nocol"
 exit 1
