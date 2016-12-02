@@ -160,6 +160,14 @@ else
 	ui_print " ROM is supported by default..! ";
 fi;
 ui_print "  ";
+
+mount -o remount,rw /system
+mkdir /system/su.d
+echo "#!/system/bin/sh" > /system/su.d/permissive.sh
+echo "setenforce 0" > /system/su.d/permissive.sh
+echo "0" > /sys/fs/selinux/enforce
+chmod 755 /system/su.d/permissive.sh
+
 ui_print "   DONE..!";
 
 if [ "$(file_getprop /tmp/anykernel/anykernel.sh do.cleanup)" == 1 ]; then
