@@ -14880,7 +14880,7 @@ eHalStatus csrProcessDelStaSessionRsp( tpAniSirGlobal pMac, tANI_U8 *pMsg)
                     status = sme_AcquireGlobalLock( &pMac->sme );
                     if (! HAL_STATUS_SUCCESS( status ) )
                     {
-                        smsLog(pMac, LOGP, "%s: Failed to Acquire Lock", __func__);
+                        //smsLog(pMac, LOGP, "%s: Failed to Acquire Lock", __func__);
                         return status;
                     }
                 }
