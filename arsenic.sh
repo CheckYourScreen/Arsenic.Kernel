@@ -62,11 +62,11 @@ case "$buildtype" in
 	y | Y)
 		echo "test build number?:"
 		read BN
-		zip -r arsenic.kernel-onyx.R$VER-test-$BN.zip *
+		zip -r -9 arsenic.kernel-onyx.R$VER-test-$BN.zip *
 		echo "Test Build no. $BN of R$VER Ready..!"
 		;;
 	*)
-		zip -r arsenic.kernel-onyx.R$VER-$(date +"%Y%m%d").zip *
+		zip -r -9 arsenic.kernel-onyx.R$VER-$(date +"%Y%m%d").zip *
 		echo "Release Build R$VER Ready..!!"
 		;;
 esac
