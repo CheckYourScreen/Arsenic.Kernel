@@ -863,7 +863,7 @@ static int mdss_dsi_panel_partial_update(struct mdss_panel_data *pdata)
 				panel_data);
 	mipi  = &pdata->panel_info.mipi;
 
-	pr_debug("%s: ctrl=%p ndx=%d\n", __func__, ctrl, ctrl->ndx);
+	pr_debug("%s: ctrl=%pK ndx=%d\n", __func__, ctrl, ctrl->ndx);
 
 	caset[1] = (((pdata->panel_info.roi_x) & 0xFF00) >> 8);
 	caset[2] = (((pdata->panel_info.roi_x) & 0xFF));
@@ -997,7 +997,7 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 #ifdef VENDOR_EDIT
     pr_err("mdss_dsi_panel_on\n");
 #else
-	pr_debug("%s: ctrl=%p ndx=%d\n", __func__, ctrl, ctrl->ndx);
+	pr_debug("%s: ctrl=%pK ndx=%d\n", __func__, ctrl, ctrl->ndx);
 #endif
 #ifdef VENDOR_EDIT
 /* Onlinerd.driver, 2014/08/10  Add for print 14021 lcd enable pin */
@@ -1074,7 +1074,7 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 #ifdef VENDOR_EDIT
     pr_err("mdss_dsi_panel_off\n");
 #else
-	pr_debug("%s: ctrl=%p ndx=%d\n", __func__, ctrl, ctrl->ndx);
+	pr_debug("%s: ctrl=%pK ndx=%d\n", __func__, ctrl, ctrl->ndx);
 #endif
 #ifdef VENDOR_EDIT
 /* Mobile Phone Software Dept.Driver, 2014/02/25  Add for ESD test */
