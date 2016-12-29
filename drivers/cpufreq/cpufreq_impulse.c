@@ -74,7 +74,7 @@ static struct mutex gov_lock;
 static unsigned int hispeed_freq;
 
 /* Go to hi speed when CPU load at or above this value. */
-#define DEFAULT_GO_HISPEED_LOAD 99
+#define DEFAULT_GO_HISPEED_LOAD 96
 static unsigned long go_hispeed_load = DEFAULT_GO_HISPEED_LOAD;
 
 /* Go to lowest speed when CPU load at or below this value. */
@@ -402,6 +402,7 @@ static u64 update_load(int cpu)
 	return now;
 }
 
+#define MAX_LOCAL_LOAD 100
 static void cpufreq_impulse_timer(unsigned long data)
 {
 	u64 now;
@@ -450,7 +451,8 @@ static void cpufreq_impulse_timer(unsigned long data)
 	if (boosted)
 		new_freq = max(new_freq, this_hispeed_freq);
 
-	if (pcpu->policy->cur >= this_hispeed_freq &&
+	if (cpu_load <= MAX_LOCAL_LOAD &&
+	    pcpu->policy->cur >= this_hispeed_freq &&
 	    new_freq > pcpu->policy->cur &&
 	    now - pcpu->hispeed_validate_time <
 	    freq_to_above_hispeed_delay(pcpu->policy->cur)) {
@@ -1256,7 +1258,6 @@ static int cpufreq_governor_impulse(struct cpufreq_policy *policy,
 			pcpu->hispeed_validate_time =
 				pcpu->floor_validate_time;
 			pcpu->local_hvtime = pcpu->floor_validate_time;
-			pcpu->max_freq = policy->max;
 			down_write(&pcpu->enable_sem);
 			del_timer_sync(&pcpu->cpu_timer);
 			del_timer_sync(&pcpu->cpu_slack_timer);
