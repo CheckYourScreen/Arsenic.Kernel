@@ -1991,14 +1991,14 @@ void *def_taiko_mbhc_cal(void)
 	btn_low[2] = 73;
 	btn_high[2] = 104;
 	btn_low[3] = 105;
-	btn_high[3] = 255;
-	btn_low[4] = 256;
-	btn_high[4] = 257;
-	btn_low[5] = 258;
-	btn_high[5] = 259;
-	btn_low[6] = 260;
-	btn_high[6] = 261;
-	btn_low[7] = 262;
+	btn_high[3] = 290;
+	btn_low[4] = 291;
+	btn_high[4] = 292;
+	btn_low[5] = 293;
+	btn_high[5] = 294;
+	btn_low[6] = 295;
+	btn_high[6] = 296;
+	btn_low[7] = 297;
 	btn_high[7] = 595;
 #else
     btn_low[0] = -50;
