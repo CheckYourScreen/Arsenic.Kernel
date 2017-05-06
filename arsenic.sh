@@ -4,8 +4,13 @@
 
 #For Time Calculation
 BUILD_START=$(date +"%s")
+
+# KBC
 echo "enter version name for zip name (only number) :" 
 read VER
+echo "is it a test build ..? (y/n) :"
+read buildtype
+
 # Housekeeping
 KERNEL_DIR=$PWD
 cd ..
@@ -56,17 +61,15 @@ rm -rf $OUT_DIR/dtb
 cp $KERN_IMG $OUT_DIR/zImage
 # cp $KERN_DTB $OUT_DIR/dtb
 cd $OUT_DIR
-echo "is it a test build ..? (y/n) :"
-read buildtype
 case "$buildtype" in
 	y | Y)
 		echo "test build number?:"
 		read BN
-		zip -r -9 arsenic.kernel-onyx.R$VER-test-$BN.zip *
+		zip -r -9 arsenic.kernel-onyx.R$VER-aosp-test-$BN.zip *
 		echo "Test Build no. $BN of R$VER Ready..!"
 		;;
 	*)
-		zip -r -9 arsenic.kernel-onyx.R$VER-$(date +"%Y%m%d").zip *
+		zip -r -9 arsenic.kernel-onyx.R$VER-aosp-$(date +"%Y%m%d").zip *
 		echo "Release Build R$VER Ready..!!"
 		;;
 esac
